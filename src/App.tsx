@@ -1,25 +1,26 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Suspense } from "react";
+import "./App.css";
+import { Report } from "./Report";
+import { Loading } from "./Loading";
+import {
+  ThemeProvider,
+  createMuiTheme,
+  CssBaseline,
+  Container,
+} from "@material-ui/core";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={createMuiTheme()}>
+      <CssBaseline />
+      <div className="App">
+        <Suspense fallback={<Loading />}>
+          <Container maxWidth="md">
+            <Report />
+          </Container>
+        </Suspense>
+      </div>
+    </ThemeProvider>
   );
 }
 
