@@ -98,15 +98,20 @@ export function Report() {
         );
 
         const lines: { [date: string]: number } = {};
-        const addLines: { [date: string]: number } = {};
-        const delLines: { [date: string]: number } = {};
+        const addLines: { [date: string]: number[] } = {};
+        const delLines: { [date: string]: number[] } = {};
 
         Object.keys(report.data.changes_by_date).forEach((date) => {
           const yymmdd = getDate(date, "YYYY-MM-DD");
-          if (!Object.keys(lines).includes(yymmdd)) lines[yymmdd] = 0;
+          if (!Object.keys(addLines).includes(yymmdd)) addLines[yymmdd] = [];
+          if (!Object.keys(delLines).includes(yymmdd)) delLines[yymmdd] = [];
           lines[yymmdd] = report.data.changes_by_date[date].lines;
-          addLines[yymmdd] = report.data.changes_by_date[date].ins;
-          delLines[yymmdd] = report.data.changes_by_date[date].del;
+          addLines[yymmdd].push(
+            parseInt(report.data.changes_by_date[date].ins)
+          );
+          delLines[yymmdd].push(
+            parseInt(report.data.changes_by_date[date].del)
+          );
         });
 
         return {
@@ -116,7 +121,7 @@ export function Report() {
           authorOrderByCommits,
           lines,
           addLines,
-          delLines
+          delLines,
         };
       }}
     >
@@ -267,7 +272,7 @@ export function Report() {
                     },
                   },
                   legend: {
-                    data: ["已存行数", "增加行数", '删除行数'],
+                    data: ["已存行数", "增加行数", "删除行数"],
                   },
                   series: [
                     {
@@ -278,12 +283,18 @@ export function Report() {
                     {
                       name: "增加行数",
                       type: "line",
-                      data: Object.values(data.addLines),
+                      data: Object.values(data.addLines).map(
+                        (item) => item.reduce((res, val) => (res += val)),
+                        0
+                      ),
                     },
                     {
                       name: "删除行数",
                       type: "line",
-                      data: Object.values(data.delLines),
+                      data: Object.values(data.delLines).map(
+                        (item) => item.reduce((res, val) => (res += val)),
+                        0
+                      ),
                     },
                   ],
                 }}
