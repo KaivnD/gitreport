@@ -19,7 +19,7 @@ export function Report() {
   return (
     <Async
       promiseFn={async () => {
-        const report = await axios.get("/report.json");
+        const report = await axios.get("./report.json");
 
         const authorOrderByCommits = Object.keys(report.data.authors).sort(
           (a, b) =>
